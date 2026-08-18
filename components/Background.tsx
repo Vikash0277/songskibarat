@@ -2,6 +2,7 @@
 
 interface BackgroundProps {
   theme?: string;
+  djActive?: boolean;
 }
 
 const THEME_BACKGROUNDS: Record<string, string> = {
@@ -11,8 +12,10 @@ const THEME_BACKGROUNDS: Record<string, string> = {
   sepia: "/cybercafe.png",
 };
 
-export default function Background({ theme = "deluxe" }: BackgroundProps) {
-  const bgImage = THEME_BACKGROUNDS[theme] ?? THEME_BACKGROUNDS.deluxe;
+const DJ_BACKGROUND = "/songskibarat.png";
+
+export default function Background({ theme = "deluxe", djActive = false }: BackgroundProps) {
+  const bgImage = djActive ? DJ_BACKGROUND : (THEME_BACKGROUNDS[theme] ?? THEME_BACKGROUNDS.deluxe);
 
   const getThemeOverlay = () => {
     switch (theme) {

@@ -49,8 +49,8 @@ export default function Home() {
   const [activeModal, setActiveModal] = useState<"about" | "faq" | "support" | "theme" | null>(null);
   const [libraryOpen, setLibraryOpen] = useState(false);
   const [theme, setTheme] = useState<typeof THEME_KEYS[number]>("deluxe");
-  // Track a counter to force useEffect re-fire even when switching back to same theme
   const [playlistTrigger, setPlaylistTrigger] = useState(0);
+  const [djActive, setDjActive] = useState(false);
 
   const currentHeroText = THEME_DATA[theme] || THEME_DATA.deluxe;
 
@@ -65,33 +65,18 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col justify-between select-none">
+    <div className="relative min-h-screen flex flex-col select-none">
       {/* Background layer */}
-      <Background theme={theme} />
+      <Background theme={theme} djActive={djActive} />
 
       {/* Top Header Navigation */}
       <TopHeader onOpenModal={handleOpenModal} onOpenLibrary={() => setLibraryOpen(true)} currentTheme={theme} />
 
       {/* Main Fullscreen Hero Area */}
-      <main className="relative flex flex-1 flex-col items-center justify-between px-4 pb-6 pt-4 text-center">
-        {/* Top Spacer */}
-        <div className="h-4 sm:h-12" />
-
-        {/* Center Hero Hindi Typography matching screenshot - updates dynamically with theme */}
-        <div className="my-auto flex flex-col items-center justify-center py-6 sm:py-12">
-          <button
-            type="button"
-            onClick={() => handleSetTheme("deluxe")}
-            title="Deluxe Saloon"
-            className="group cursor-pointer transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-          >
-            <h1 className="hero-text-shadow font-cafe text-6xl font-extrabold tracking-tight text-white sm:text-8xl md:text-9xl leading-[0.88] drop-shadow-2xl transition-all duration-500">
-              <div>{currentHeroText.line1}</div>
-              <div className="mt-1 sm:mt-3">{currentHeroText.line2}</div>
-            </h1>
-          </button>
-          
-          <div className="mt-4 flex items-center justify-center gap-2">
+      <main className="relative flex min-h-screen flex-col items-center justify-end px-4 pb-6 pt-4 text-center">
+        {/* Center Hero - just the live indicator */}
+        <div className="flex flex-1 flex-col items-center justify-center py-6 sm:py-12">
+          <div className="flex items-center justify-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-ping" />
             <p className="text-xs uppercase tracking-[0.35em] text-white/80 font-mono transition-all duration-300">
               {currentHeroText.tagline}
@@ -99,12 +84,9 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Bottom Overlay Area: WhatsApp Banner + Floating Player Dock */}
+        {/* Bottom: WhatsApp Banner + Player + Scroll Cue */}
         <div className="w-full space-y-3.5 pb-2">
-          {/* WhatsApp / Community Promo Banner */}
-          <WhatsAppBanner theme={theme} />
-
-          {/* Floating Audio Player Dock */}
+          {/* <WhatsAppBanner theme={theme} /> */}
           <Suspense
             fallback={
               <div className="mx-auto max-w-xl rounded-3xl border border-white/10 bg-black/60 p-4 text-center text-xs text-white/60 backdrop-blur-md">
@@ -116,11 +98,11 @@ export default function Home() {
               externalPlaylistSlug={currentHeroText.playlistSlug}
               externalPlaylistLabel={currentHeroText.playlistLabel}
               externalPlaylistTrigger={playlistTrigger}
+              onDjActiveChange={setDjActive}
             />
           </Suspense>
         </div>
 
-        {/* Scroll Cue & Footer Info matching screenshot */}
         <div className="mt-3 flex flex-col items-center gap-1.5 text-center">
           <a
             href="https://www.sorabyte.in/"

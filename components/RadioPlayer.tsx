@@ -82,6 +82,7 @@ interface RadioPlayerProps {
   externalPlaylistSlug?: string | null;
   externalPlaylistLabel?: string;
   externalPlaylistTrigger?: number;
+  onDjActiveChange?: (active: boolean) => void;
 }
 
 export default function RadioPlayer({
@@ -89,6 +90,7 @@ export default function RadioPlayer({
   externalPlaylistSlug,
   externalPlaylistLabel,
   externalPlaylistTrigger,
+  onDjActiveChange,
 }: RadioPlayerProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<YTPlayer | null>(null);
@@ -278,6 +280,7 @@ export default function RadioPlayer({
             setActiveSlug("dj");
             setLabel(djLabel);
             setError(null);
+            onDjActiveChange?.(true);
             try {
               p.stopVideo();
             } catch {
@@ -310,6 +313,7 @@ export default function RadioPlayer({
             setActiveSlug(revertPreset.slug);
             setLabel(externalPlaylistLabel ?? revertPreset.en);
             setError(null);
+            onDjActiveChange?.(false);
             try {
               p.stopVideo();
             } catch {

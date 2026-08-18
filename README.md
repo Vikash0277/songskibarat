@@ -41,9 +41,6 @@ Open [http://localhost:3000](http://localhost:3000).
 |----------|----------|-------------|
 | `MONGODB_URI` | Yes | MongoDB connection string |
 | `JWT_SECRET` | Yes | Secret for JWT token signing |
-| `YOUTUBE_DATA_API_KEY` | No | YouTube Data API v3 key |
-| `UPSTASH_REDIS_REST_URL` | No | Upstash Redis for rate limiting |
-| `UPSTASH_REDIS_REST_TOKEN` | No | Upstash Redis token |
 
 ## Project Structure
 

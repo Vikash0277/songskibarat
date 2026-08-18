@@ -73,9 +73,9 @@ export default function Home() {
       <TopHeader onOpenModal={handleOpenModal} onOpenLibrary={() => setLibraryOpen(true)} currentTheme={theme} />
 
       {/* Main Fullscreen Hero Area */}
-      <main className="relative flex min-h-screen flex-col items-center justify-end px-4 pb-6 pt-4 text-center">
+      <main className="relative flex min-h-[100dvh] flex-col items-center justify-end px-4 pb-6 pt-4 text-center">
         {/* Center Hero - just the live indicator */}
-        <div className="flex flex-1 flex-col items-center justify-center py-6 sm:py-12">
+        <div className="flex flex-1 flex-col items-center justify-center py-2 sm:py-12">
           <div className="flex items-center justify-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-ping" />
             <p className="text-xs uppercase tracking-[0.35em] text-white/80 font-mono transition-all duration-300">
@@ -85,7 +85,7 @@ export default function Home() {
         </div>
 
         {/* Bottom: WhatsApp Banner + Player + Scroll Cue */}
-        <div className="w-full space-y-3.5 pb-2">
+        <div className="w-full space-y-2 sm:space-y-3.5 pb-2">
           {/* <WhatsAppBanner theme={theme} /> */}
           <Suspense
             fallback={
@@ -103,7 +103,7 @@ export default function Home() {
           </Suspense>
         </div>
 
-        <div className="mt-3 flex flex-col items-center gap-1.5 text-center">
+        <div className="mt-1 sm:mt-3 flex flex-col items-center gap-1.5 text-center">
           <a
             href="https://www.sorabyte.in/"
             target="_blank"

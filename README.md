@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# songskibarat
+
+A community-powered internet radio station built with Next.js. Listen to curated Bollywood playlists, switch themes, and let anyone go live with their own YouTube playlist.
+
+## Features
+
+- **Rotations** — curated 90s & 2000s Bollywood time-slot playlists (Deluxe Saloon, Golden 90s, Truck Driver, etc.)
+- **DJ Booth** — paste any YouTube/YT Music playlist link and everyone listening hears it live
+- **Playlist Library** — every playlist shared is saved permanently; anyone can browse, search, and replay from the library
+- **Theming** — switch between Deluxe, Cyber, Golden 90s, and Midnight themes
+- **Live counter** — real-time online listener count
+- **Responsive** — works on mobile and desktop
+
+## Tech Stack
+
+- **Framework:** Next.js 16 (App Router, Turbopack)
+- **Database:** MongoDB (Mongoose)
+- **Auth:** JWT (jose)
+- **Player:** YouTube IFrame API
+- **Styling:** Tailwind CSS
+- **UI:** Custom components (no component library)
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+# install dependencies
+npm install
+
+# copy env and fill in values
+cp .env.example .env
+
+# run dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `MONGODB_URI` | Yes | MongoDB connection string |
+| `JWT_SECRET` | Yes | Secret for JWT token signing |
+| `YOUTUBE_DATA_API_KEY` | No | YouTube Data API v3 key |
+| `UPSTASH_REDIS_REST_URL` | No | Upstash Redis for rate limiting |
+| `UPSTASH_REDIS_REST_TOKEN` | No | Upstash Redis token |
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+app/
+  page.tsx              # Home — hero, DJ Booth, rotations grid
+  streaming/page.tsx    # Standalone DJ Booth page
+  api/
+    streaming/
+      active/route.ts   # GET/POST active playlist
+      library/route.ts  # GET/POST playlist library
+components/
+  RadioPlayer.tsx       # YouTube IFrame player with rotation + DJ mode
+  DJBar.tsx             # Inline DJ Booth (homepage)
+  LibraryDrawer.tsx     # Slide-out library panel
+  TopHeader.tsx         # Nav with online count, theme, library, support
+models/
+  ActivePlaylist.ts     # Currently playing DJ playlist
+  LibraryPlaylist.ts    # Saved community playlists
+lib/
+  data.ts               # Curated rotation playlists
+  db.ts                 # MongoDB connection
+  auth.ts               # JWT helpers
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## License
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Made with love by [sorabyte.in](https://sorabyte.in)

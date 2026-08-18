@@ -1,69 +1,200 @@
-import Image from "next/image";
+"use client";
+
+import { Suspense, useState } from "react";
+import TopHeader from "@/components/TopHeader";
+import Background from "@/components/Background";
+import WhatsAppBanner from "@/components/WhatsAppBanner";
+import RadioPlayer from "@/components/RadioPlayer";
+import Modals from "@/components/Modals";
+import LibraryDrawer from "@/components/LibraryDrawer";
+import DJBar from "@/components/DJBar";
+import SiteFooter from "@/components/SiteFooter";
+import Link from "next/link";
+import { playlists } from "@/lib/data";
+
+const THEME_DATA = {
+  deluxe: {
+    line1: "Deluxe",
+    line2: "Saloon",
+    tagline: "Deluxe Saloon · Open All Hours",
+    playlistSlug: "deluxe-saloon",
+    playlistLabel: "Deluxe Saloon Radio",
+  },
+  cyber: {
+    line1: "Cyber",
+    line2: "Café",
+    tagline: "Cyber Café · Open All Hours",
+    playlistSlug: "deluxe-saloon",
+    playlistLabel: "Cyber Café Radio",
+  },
+  golden: {
+    line1: "Golden",
+    line2: "90s",
+    tagline: "Golden 90s Radio · 24/7 Cassette Gold",
+    playlistSlug: "dard-90s",
+    playlistLabel: "Golden 90s Radio",
+  },
+  sepia: {
+    line1: "Midnight",
+    line2: "Radio",
+    tagline: "Midnight Radio · 24/7 Sepia Beats",
+    playlistSlug: "dard-90s",
+    playlistLabel: "Midnight Radio",
+  },
+};
+
+const THEME_KEYS = ["deluxe", "cyber", "golden", "sepia"] as const;
 
 export default function Home() {
+  const [activeModal, setActiveModal] = useState<"about" | "faq" | "support" | "theme" | null>(null);
+  const [libraryOpen, setLibraryOpen] = useState(false);
+  const [theme, setTheme] = useState<typeof THEME_KEYS[number]>("deluxe");
+  // Track a counter to force useEffect re-fire even when switching back to same theme
+  const [playlistTrigger, setPlaylistTrigger] = useState(0);
+
+  const currentHeroText = THEME_DATA[theme] || THEME_DATA.deluxe;
+
+  const handleSetTheme = (t: typeof THEME_KEYS[number]) => {
+    setTheme(t);
+    // Bump trigger so RadioPlayer reacts even if switching back to same theme
+    setPlaylistTrigger((prev) => prev + 1);
+  };
+
+  const handleOpenModal = (modal: "about" | "faq" | "support" | "theme") => {
+    setActiveModal(modal);
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="relative min-h-screen flex flex-col justify-between select-none">
+      {/* Background layer */}
+      <Background theme={theme} />
+
+      {/* Top Header Navigation */}
+      <TopHeader onOpenModal={handleOpenModal} onOpenLibrary={() => setLibraryOpen(true)} currentTheme={theme} />
+
+      {/* Main Fullscreen Hero Area */}
+      <main className="relative flex flex-1 flex-col items-center justify-between px-4 pb-6 pt-4 text-center">
+        {/* Top Spacer */}
+        <div className="h-4 sm:h-12" />
+
+        {/* Center Hero Hindi Typography matching screenshot - updates dynamically with theme */}
+        <div className="my-auto flex flex-col items-center justify-center py-6 sm:py-12">
+          <button
+            type="button"
+            onClick={() => handleSetTheme("deluxe")}
+            title="Deluxe Saloon"
+            className="group cursor-pointer transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+          >
+            <h1 className="hero-text-shadow font-cafe text-6xl font-extrabold tracking-tight text-white sm:text-8xl md:text-9xl leading-[0.88] drop-shadow-2xl transition-all duration-500">
+              <div>{currentHeroText.line1}</div>
+              <div className="mt-1 sm:mt-3">{currentHeroText.line2}</div>
+            </h1>
+          </button>
+          
+          <div className="mt-4 flex items-center justify-center gap-2">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-ping" />
+            <p className="text-xs uppercase tracking-[0.35em] text-white/80 font-mono transition-all duration-300">
+              {currentHeroText.tagline}
+            </p>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+        {/* Bottom Overlay Area: WhatsApp Banner + Floating Player Dock */}
+        <div className="w-full space-y-3.5 pb-2">
+          {/* WhatsApp / Community Promo Banner */}
+          <WhatsAppBanner theme={theme} />
+
+          {/* Floating Audio Player Dock */}
+          <Suspense
+            fallback={
+              <div className="mx-auto max-w-xl rounded-3xl border border-white/10 bg-black/60 p-4 text-center text-xs text-white/60 backdrop-blur-md">
+                Loading radio engine…
+              </div>
+            }
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
+            <RadioPlayer
+              externalPlaylistSlug={currentHeroText.playlistSlug}
+              externalPlaylistLabel={currentHeroText.playlistLabel}
+              externalPlaylistTrigger={playlistTrigger}
             />
-            Deploy Now
-          </a>
+          </Suspense>
+        </div>
+
+        {/* Scroll Cue & Footer Info matching screenshot */}
+        <div className="mt-3 flex flex-col items-center gap-1.5 text-center">
           <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            href="https://www.sorabyte.in/"
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noreferrer"
+            className="text-[11px] font-mono tracking-wider text-white/50 transition-colors hover:text-white/80"
           >
-            Documentation
+            Contact: sorabyte.in
+          </a>
+          
+          <a
+            href="#rotations"
+            className="group flex flex-col items-center gap-0.5 text-[10px] uppercase tracking-[0.3em] text-white/60 transition-colors hover:text-amber-400"
+          >
+            <span>SCROLL</span>
+            <span className="text-sm animate-bounce text-amber-400/70">⌄</span>
           </a>
         </div>
       </main>
+
+      {/* Below-the-fold content sections */}
+      <div id="rotations" className="relative z-10 border-t border-white/10 bg-[#0a0c10]/90 px-4 py-16 backdrop-blur-xl">
+        <div className="mx-auto max-w-5xl">
+          {/* DJ Booth – go live with your own playlist */}
+          <DJBar />
+
+          {/* Section 1: Rotations */}
+          <div className="text-center">
+            <h2 className="font-cafe text-2xl font-extrabold text-white sm:text-3xl">
+              Radio Rotations
+            </h2>
+            <p className="mt-2 text-xs uppercase tracking-widest text-amber-400/90">
+              Curated 90s & 2000s Bollywood Time Slots
+            </p>
+          </div>
+
+          <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {playlists.map((p) => (
+              <Link
+                key={p.slug}
+                href={`/?playlist=${p.slug}`}
+                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md transition-all hover:border-amber-400/50 hover:bg-white/10 hover:shadow-xl"
+              >
+                <div className="flex items-center justify-between text-xs font-mono text-amber-400">
+                  <span>{p.hours}</span>
+                </div>
+                <div className="mt-3 font-cafe text-2xl font-bold text-white group-hover:text-amber-300">
+                  {p.hi}
+                </div>
+                <div className="text-xs text-white/70">{p.en}</div>
+                <p className="mt-3 text-xs leading-relaxed text-white/60">
+                  {p.blurb}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-16">
+          <SiteFooter />
+        </div>
+      </div>
+
+      {/* Interactive Modals */}
+      <Modals
+        activeModal={activeModal}
+        onClose={() => setActiveModal(null)}
+        currentTheme={theme}
+        onSelectTheme={(t) => handleSetTheme(t as typeof THEME_KEYS[number])}
+      />
+
+      {/* Library Drawer */}
+      <LibraryDrawer open={libraryOpen} onClose={() => setLibraryOpen(false)} />
     </div>
   );
 }
